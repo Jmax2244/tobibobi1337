@@ -1,65 +1,26 @@
 import React, { useState } from 'react';
-
-const mockFiles = [
-  {
-    name: 'Documents',
-    type: 'folder',
-    children: [
-      { name: 'Moje CV.pdf', type: 'file' },
-      { name: 'Notes.txt', type: 'file' },
-    ],
-  },
-  {
-    name: 'Photografies',
-    type: 'folder',
-    children: [
-      { name: 'Fotki malych chlopcow.jpg', type: 'file' },
-    ],
-  },
-   {
-    name: 'czemó',
-    type: 'folder',
-    children: [
-      { name: 'marcinGortat.jpg', type: 'file' },
-    ],
-  },
-  { name: 'ok.txt', type: 'file' },
-];
-
-function FileNode({ node }) {
-  const [open, setOpen] = useState(false);
-
-  if (node.type === 'folder') {
-    return (
-      <div style={{ marginLeft: 16 }}>
-        <span style={{ cursor: 'pointer' }} onClick={() => setOpen(!open)}>
-          {open ? '📂' : '📁'} {node.name}
-        </span>
-        {open && node.children && (
-          <div>
-            {node.children.map((child, idx) => (
-              <FileNode key={idx} node={child} />
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-  return (
-    <div style={{ marginLeft: 32 }}>
-      🗎 {node.name}
-    </div>
-  );
-}
+import { fileSystem } from '../data/fileSystem';
+import FileTree from './FileTree';
+import FileDetails from './FileDetails';
 
 export default function FileExplorer() {
+  const [expandedFolders, setExpandedFolders] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   return (
-    <div>
-      <h3>Eksplorator plików</h3>
+    <div style={{ display: 'flex', gap: 32 }}>
       <div>
-        {mockFiles.map((node, idx) => (
-          <FileNode key={idx} node={node} />
-        ))}
+        <h3>Eksplorator plików</h3>
+        <FileTree
+          data={fileSystem}
+          expandedFolders={expandedFolders}
+          setExpandedFolders={setExpandedFolders}
+          onSelect={setSelectedFile}
+          selectedFile={selectedFile}
+        />
+      </div>
+      <div style={{ minWidth: 220 }}>
+        <FileDetails file={selectedFile} />
       </div>
     </div>
   );
